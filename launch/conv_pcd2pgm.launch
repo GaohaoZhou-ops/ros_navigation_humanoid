@@ -1,0 +1,17 @@
+<launch>
+    <node pkg="pcd2pgm" name="pcd2pgm" type="pcd2pgm" output="screen">
+        <param name="file_directory" value= "$(find ros_navigation_humaniod)/maps/" />
+        <param name="file_name" value= "map" />
+        <param name="map_topic_name" value= "map" />
+
+        <param name="thre_z_min" value= "0.2" />
+        <param name="thre_z_max" value= "0.8" />
+        <param name="flag_pass_through" value= "0" />
+        <param name="thre_radius" value= "0.5" />
+        <param name="thres_point_count" value= "10" />
+        <param name="map_resolution" value= "0.05" />
+    </node>
+
+    <node pkg="rviz" name="rviz_sim" type="rviz" args="-d $(find ros_navigation_humaniod)/rviz/conv_pcd2pgm.rviz" output="screen"/>
+
+</launch>

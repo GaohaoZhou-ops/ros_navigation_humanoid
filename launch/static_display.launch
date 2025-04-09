@@ -1,0 +1,11 @@
+<launch>
+
+    <node pkg="rviz" name="rviz_sim" type="rviz" args="-d $(find ros_navigation_humaniod)/rviz/static_display.rviz" output="screen"/>
+	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+    <arg name="pelvis_to_foot_heigth" default="0.8" />
+    <arg name="robot_name" default="g1_29dof_with_hand"/>
+    <param name="robot_description" textfile="$(find ros_navigation_humaniod)/robot_descriptions/unitree_g1/$(arg robot_name).urdf" />
+    <node pkg="tf" type="static_transform_publisher" name="pelvis_2_map" args="0 0 -$(arg pelvis_to_foot_heigth) 0 0 0 1 pelvis map 100" />
+</launch>

@@ -1,0 +1,11 @@
+<launch>
+    <arg name="robot_name" default="g1_29dof_with_hand"/>
+    <param name="robot_description" textfile="$(find ros_navigation_humanoid)/robot_descriptions/unitree_g1/$(arg robot_name).urdf" />
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+    <!-- 动态交互 -->
+    <node name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" />
+    <!-- 静态展示 -->
+	<!-- <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" /> -->
+
+</launch>

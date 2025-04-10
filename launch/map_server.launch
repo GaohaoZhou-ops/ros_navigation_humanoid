@@ -1,0 +1,4 @@
+<launch>
+    <arg name="pgm_map_name" default="map" />
+    <node name="map_server" pkg="map_server" type="map_server" args="$(find ros_navigation_humanoid)/maps/$(arg pgm_map_name).yaml"/>
+</launch>

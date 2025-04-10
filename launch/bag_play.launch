@@ -1,20 +1,18 @@
 <launch>
 
-    <arg name="robot_name" default="g1_29dof_with_hand"/>
-    <arg name="pgm_map_name" default="map" />
     <param name="use_sim_time" value="false" />
 
     <!-- rosbag file path -->
-    <arg name="bag_path" default="$(find ros_navigation_humaniod)/resources/localization_3d.bag" />
-    <node name="map_server" pkg="map_server" type="map_server" args="$(find ros_navigation_humaniod)/maps/$(arg pgm_map_name).yaml"/>
+    <arg name="bag_path" default="$(find ros_navigation_humanoid)/resources/localization_3d.bag" />
+    
+    <!-- map server -->
+    <include file="$(find ros_navigation_humanoid)/launch/map_server.launch" />
+    <!-- robot description -->
+    <include file="$(find ros_navigation_humanoid)/launch/robot_desc.launch" />
 
-    <node pkg="rviz" name="rviz_sim" type="rviz" args="-d $(find ros_navigation_humaniod)/rviz/bag_play.rviz" output="screen"/>
-    <param name="robot_description" textfile="$(find ros_navigation_humaniod)/robot_descriptions/unitree_g1/$(arg robot_name).urdf" />
-	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
-	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
-
+    <node pkg="rviz" name="rviz_sim" type="rviz" args="-d $(find ros_navigation_humanoid)/rviz/bag_play.rviz" output="screen"/>
     <node pkg="rosbag" type="play" name="player" output="screen" args="--clock $(arg bag_path)"/>
-    <node pkg="ros_navigation_humaniod" type="bag_play_node" name="bag_play_node" output="screen" >
+    <node pkg="ros_navigation_humanoid" type="bag_play_node" name="bag_play_node" output="screen" >
         <param name="loc_topic" type="string" value="/localization_3d" />
         <param name="trajectory_topic" type="string" value="/trajectory_path" />
         <param name="pelvis_to_foot_heigth" type="double" value="0.8" />

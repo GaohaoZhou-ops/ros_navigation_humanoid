@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>ros_navigation_humaniod</name>
-  <version>0.0.1</version>
-  <description>The ros_navigation_humaniod package</description>
+  <name>ros_navigation_humanoid</name>
+  <version>0.0.2</version>
+  <description>The ros_navigation_humanoid package</description>
 
-  <maintainer email="gaohaozhou@deepglint.com">gaohao</maintainer>
+  <maintainer email="343905080@qq.com">gaohao</maintainer>
 
   <license>TODO</license>
 
@@ -16,6 +16,7 @@
   <build_depend>pcd2pgm</build_depend>
   <build_depend>nav_msgs</build_depend>
   <build_depend>tf</build_depend>
+  <build_depend>visualization_msgs</build_depend>
 
   <build_export_depend>geometry_msgs</build_export_depend>
   <build_export_depend>roscpp</build_export_depend>
@@ -24,6 +25,7 @@
   <build_export_depend>pcd2pgm</build_export_depend>
   <build_export_depend>nav_msgs</build_export_depend>
   <build_export_depend>tf</build_export_depend>
+  <build_export_depend>visualization_msgs</build_export_depend>
 
   <exec_depend>geometry_msgs</exec_depend>
   <exec_depend>roscpp</exec_depend>
@@ -32,6 +34,7 @@
   <exec_depend>pcd2pgm</exec_depend>
   <exec_depend>nav_msgs</exec_depend>
   <exec_depend>tf</exec_depend>
+  <exec_depend>visualization_msgs</exec_depend>
 
   <export>
 

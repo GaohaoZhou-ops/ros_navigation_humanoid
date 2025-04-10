@@ -1,6 +1,6 @@
 <launch>
     <node pkg="pcd2pgm" name="pcd2pgm" type="pcd2pgm" output="screen">
-        <param name="file_directory" value= "$(find ros_navigation_humaniod)/maps/" />
+        <param name="file_directory" value= "$(find ros_navigation_humanoid)/maps/" />
         <param name="file_name" value= "map" />
         <param name="map_topic_name" value= "map" />
 
@@ -12,6 +12,6 @@
         <param name="map_resolution" value= "0.05" />
     </node>
 
-    <node pkg="rviz" name="rviz_sim" type="rviz" args="-d $(find ros_navigation_humaniod)/rviz/conv_pcd2pgm.rviz" output="screen"/>
+    <node pkg="rviz" name="rviz_sim" type="rviz" args="-d $(find ros_navigation_humanoid)/rviz/conv_pcd2pgm.rviz" output="screen"/>
 
 </launch>

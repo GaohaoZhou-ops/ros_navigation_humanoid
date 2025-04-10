@@ -1,30 +1,29 @@
 <launch>
 
-    <arg name="robot_name" default="g1_29dof_with_hand"/>
-    <arg name="pgm_map_name" default="map" />
     <param name="use_sim_time" value="false" />
 
-    <node pkg="rviz" name="rviz_sim" type="rviz" args="-d $(find ros_navigation_humaniod)/rviz/rviz_sim.rviz" output="screen"/>
-    <param name="robot_description" textfile="$(find humaniod_description_pkg)/g1_description/$(arg robot_name).urdf" />
-	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
-	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+    <node pkg="rviz" name="rviz_sim" type="rviz" args="-d $(find ros_navigation_humanoid)/rviz/rviz_sim.rviz" output="screen"/>
 
-    <node name="map_server" pkg="map_server" type="map_server" args="$(find ros_navigation_humaniod)/maps/$(arg pgm_map_name).yaml"/>
+    <!-- map server -->
+    <include file="$(find ros_navigation_humanoid)/launch/map_server.launch" />
+    <!-- robot description -->
+    <include file="$(find ros_navigation_humanoid)/launch/robot_desc.launch" />
 
     <node pkg="move_base" type="move_base" respawn="false" name="move_base_node" output="screen" clear_params="true">
-        <rosparam file="$(find ros_navigation_humaniod)/move_base_config/costmap_common_params.yaml" command="load" ns="global_costmap" />
-        <rosparam file="$(find ros_navigation_humaniod)/move_base_config/costmap_common_params.yaml" command="load" ns="local_costmap" />
+        <rosparam file="$(find ros_navigation_humanoid)/move_base_config/costmap_common_params.yaml" command="load" ns="global_costmap" />
+        <rosparam file="$(find ros_navigation_humanoid)/move_base_config/costmap_common_params.yaml" command="load" ns="local_costmap" />
 
-        <rosparam file="$(find ros_navigation_humaniod)/move_base_config/local_costmap_params.yaml" command="load" />
-        <rosparam file="$(find ros_navigation_humaniod)/move_base_config/global_costmap_params.yaml" command="load" />
-        <rosparam file="$(find ros_navigation_humaniod)/move_base_config/base_local_planner_params.yaml" command="load" />
+        <rosparam file="$(find ros_navigation_humanoid)/move_base_config/local_costmap_params.yaml" command="load" />
+        <rosparam file="$(find ros_navigation_humanoid)/move_base_config/global_costmap_params.yaml" command="load" />
+        <rosparam file="$(find ros_navigation_humanoid)/move_base_config/base_local_planner_params.yaml" command="load" />
     </node>
 
     <param name="base_global_planner" value="global_planner/GlobalPlanner" />
     <!-- <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" /> -->
     <param name="base_local_planner" value="wpbh_local_planner/WpbhLocalPlanner" />
 
-    <node pkg="ros_navigation_humaniod" type="rviz_sim_node" name="rviz_sim_node" output="screen">
+    <!-- 导航仿真节点 -->
+    <node pkg="ros_navigation_humanoid" type="rviz_sim_node" name="rviz_sim_node" output="screen">
         <param name="pelvis_to_foot_heigth" type="double" value="0.8" />
     </node>
 

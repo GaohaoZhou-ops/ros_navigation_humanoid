@@ -1,0 +1,33 @@
+<launch>
+
+    <param name="use_sim_time" value="false" />
+
+    <!-- map server -->
+    <include file="$(find ros_navigation_humanoid)/launch/map_server.launch" />
+    <!-- robot description -->
+    <include file="$(find ros_navigation_humanoid)/launch/robot_desc.launch" />
+
+
+    <node pkg="rviz" name="rviz_sim" type="rviz" args="-d $(find ros_navigation_humanoid)/rviz/rviz_sim.rviz" output="screen"/>
+
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base_node" output="screen" clear_params="true">
+        <rosparam file="$(find ros_navigation_humanoid)/move_base_config/costmap_common_params.yaml" command="load" ns="global_costmap" />
+        <rosparam file="$(find ros_navigation_humanoid)/move_base_config/costmap_common_params.yaml" command="load" ns="local_costmap" />
+
+        <rosparam file="$(find ros_navigation_humanoid)/move_base_config/local_costmap_params.yaml" command="load" />
+        <rosparam file="$(find ros_navigation_humanoid)/move_base_config/global_costmap_params.yaml" command="load" />
+        <rosparam file="$(find ros_navigation_humanoid)/move_base_config/base_local_planner_params.yaml" command="load" />
+    </node>
+
+    <param name="base_global_planner" value="global_planner/GlobalPlanner" />
+    <!-- <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" /> -->
+    <param name="base_local_planner" value="wpbh_local_planner/WpbhLocalPlanner" />
+
+    <!-- 复用了放包的节点 -->
+    <node pkg="ros_navigation_humanoid" type="bag_play_node" name="bag_play_node" output="screen" >
+        <param name="loc_topic" type="string" value="/localization_3d" />
+        <param name="trajectory_topic" type="string" value="/trajectory_path" />
+        <param name="pelvis_to_foot_heigth" type="double" value="0.8" />
+    </node>
+
+</launch>

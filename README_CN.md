@@ -10,7 +10,7 @@
 
 * ROS 包：
 ```bash
-$ sudo apt-get install libpcl-dev ros-<distros>-nagivation ros-<distors>-tf
+$ sudo apt-get install libpcl-dev ros-<distros>-nagivation ros-<distors>-tf ros-<distors>-sbpl ros-<distors>-visualization_msgs
 ```
 
 * pgm地图修改工具：
@@ -24,9 +24,21 @@ $ cd src
 $ git clone git@github.com:Hinson-A/pcd2pgm_package.git
 ```
 
+* 【可选】OpenCV-3
+
+如果你不需要进行步态规划实验，可以不用安装OpenCV-3库，但在该仓库中的 `foot_planner.launch` 文件就无法运行。
+
 ------
 
 ## 更新日志
+
+### 2025年04月10日
+* 添加了仿真与真机导航中在rviz上的重定位功能；
+* 修改了README文件中的基础拼写错误；
+* 添加了Unitree G1机器人步态仿真的功能；
+
+### 2025年03月31日
+* 添加rviz界面中发布目标位置并计算速度命令 `rviz_nav.launch`；
 
 ### 2025年03月06日
 * 添加rviz界面中静态展示机器人模型 `static_display_without_map.launch`；
@@ -76,14 +88,14 @@ $ source install/setup.bash
 
 该文件用来在rviz中静态展示机器人urdf模型，使用下面的命令运行：
 ```bash
-$ roslaunch ros_navigation_humaniod static_display.launch
+$ roslaunch ros_navigation_humanoid static_display.launch
 ```
 
 如果你想要使用自己的机器人模型文件，可以根据实际情况文件中的以下字段进行修改：
 ```xml
 <arg name="pelvis_to_foot_heigth" default="0.8" />
 <arg name="robot_name" default="g1_29dof_with_hand"/>
-<param name="robot_description" textfile="$(find ros_navigation_humaniod)/robot_descriptions/unitree_g1/$(arg robot_name).urdf" />
+<param name="robot_description" textfile="$(find ros_navigation_humanoid)/robot_descriptions/unitree_g1/$(arg robot_name).urdf" />
 <node pkg="tf" type="static_transform_publisher" name="pelvis_2_map" args="0 0 -$(arg pelvis_to_foot_heigth) 0 0 0 1 pelvis map 100" />
 ```
 
@@ -97,16 +109,16 @@ $ roslaunch ros_navigation_humaniod static_display.launch
 
 【注意】：该功能仅支持 `pcd` 格式的点云文件。
 
-#### Step1. 将地图`pcd`点云文件移动到 `ros_navigation_humaniod/maps` 路径下
+#### Step1. 将地图`pcd`点云文件移动到 `ros_navigation_humanoid/maps` 路径下
 
 ```bash
-$ roscd ros_navigation_humaniod/
+$ roscd ros_navigation_humanoid/
 $ mv map.pcd maps/
 ```
 
 #### Step2. 修改launch文件中的参数
 
-根据需要对 `ros_navigation_humaniod/launch/conv_pcd2pgm.launch` 中的配置进行修改：
+根据需要对 `ros_navigation_humanoid/launch/conv_pcd2pgm.launch` 中的配置进行修改：
 
 * `thre_z_min`: Z-轴最小的高度;
 * `thre_z_max`: Z-轴最大的高度;
@@ -118,13 +130,13 @@ $ mv map.pcd maps/
 #### Step3. 运行这个launch文件
 
 ```bash
-$ roslaunch ros_navigation_humaniod conv_pcd2pgm.launch
+$ roslaunch ros_navigation_humanoid conv_pcd2pgm.launch
 ```
 
 #### Step4. 使用map_server将转换后的点云地图保存下来
 
 ```bash
-$ roscd ros_navigation_humaniod/maps/
+$ roscd ros_navigation_humanoid/maps/
 $ rosrun map_server map_saver
 ```
 
@@ -140,12 +152,24 @@ $ rosrun map_server map_saver
 
 ---
 
+### rviz_nav.launch
+这个文件在 `rviz` 界面中用 `move_base` 进行导航实测，通过 rviz 中的按钮 `2D Nav Goal` 发布 `/move_base_simple/goal` 话题以及规划器发布的 `/cmd_vel` 。
+
+```bash
+$ roslaunch ros_navigation_humanoid rviz_nav.launch
+```
+
+[待真机测试后补充git动图]
+
+
+---
+
 ### rviz_sim.launch
 
 这个文件在 `rviz` 界面中用 `move_base` 进行导航仿真，需要根据自己的需求对路径规划器进行配置，通过 rviz 中的按钮 `2D Nav Goal` 发布 `/move_base_simple/goal` 话题以及规划器发布的 `/cmd_vel` 并进行无损执行。
 
 ```bash
-$ roslaunch ros_navigation_humaniod rviz_sim.launch
+$ roslaunch ros_navigation_humanoid rviz_sim.launch
 ```
 
 ![rviz_sim](resources/rviz_sim.gif)
@@ -162,6 +186,55 @@ $ roslaunch g1_ros1_nav bag_play.launch
 
 ![bag_play](resources/bag_play.gif)
 
+---
+
+### 【可选】foot_planner.launch
+
+这个文件实现了机器人步态仿真的功能，如果想要运行则需要安装以下第三方package：
+```bash
+$ cd src
+$ git clone https://github.com/ahornung/humanoid_msgs
+```
+
+然后拉取 `humanoid_navigation` 包，但这里只用到了这个包的其中两个部分，因此不需要将其全部放在编译空间中：
+
+```bash
+$ cd ..
+$ git clone git@github.com:ROBOTIS-GIT/humanoid_navigation.git
+$ mv humanoid_navigation/footstep_planner src
+$ mv humanoid_navigation/gridmap_2d src
+```
+
+此时你的工作空间结构应该如下：
+
+```bash
+$ tree
+
+├── src
+│   ├── footstep_planner
+│   ├── gridmap_2d
+│   ├── humanoid_msgs
+│   ├── pcd2pgm_package
+│   └── ros_navigation_humanoid
+```
+
+编译整个工作空间：
+```bash
+$ catkin build
+```
+
+下面的命令二选一：
+```bash
+$ source install/setup.bash   # install模式
+$ source devel/setup.bash     # devel模式
+```
+
+运行示例：
+```bash
+$ roslaunch ros_navigation_humanoid foot_planner.launch
+```
+
+![foot_plan](resources/foot_plann.gif)
 
 ---
 

@@ -1,0 +1,17 @@
+<launch>
+    <!-- map server -->
+    <include file="$(find ros_navigation_humanoid)/launch/map_server.launch" />
+    <!-- robot description -->
+    <include file="$(find ros_navigation_humanoid)/launch/robot_desc.launch" />
+
+    <!-- 规划器 -->
+    <include file="$(find footstep_planner)/launch/footstep_planner.launch" />
+    
+    <node pkg="rviz" name="rviz_sim" type="rviz" args="-d $(find ros_navigation_humanoid)/rviz/foot_plan.rviz" output="screen"/>
+
+    <!-- 导航仿真节点 -->
+    <node pkg="ros_navigation_humanoid" type="footstep_sim_node" name="footstep_sim_node" output="screen">
+        <param name="pelvis_to_foot_heigth" type="double" value="0.8" />
+    </node>
+
+</launch>
